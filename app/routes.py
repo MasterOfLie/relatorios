@@ -32,7 +32,7 @@ def logout():
 @main.route('/')
 @login_required
 def index():
-    return render_template('index.html')
+    return redirect('/tramite')
 
 @main.route('/tramite')
 @login_required

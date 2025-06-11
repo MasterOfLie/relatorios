@@ -1,2 +1,6 @@
-flask
-flask_sqlalchemy
+Flask
+Flask-Login
+Flask-SQLAlchemy
+openpyxl
+pytz
+Werkzeug

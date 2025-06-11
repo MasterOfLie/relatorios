@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Relatórios de Atendimentos</h2>
+
+    <form method="POST" class="row g-3 mb-5 p-3 border rounded bg-light">
+        <div class="col-md-4">
+            <label for="inicio" class="form-label"><strong>Data Início:</strong></label>
+            <input type="date" class="form-control" name="inicio" id="inicio" value="{{ inicio or '' }}">
+        </div>
+        <div class="col-md-4">
+            <label for="fim" class="form-label"><strong>Data Fim:</strong></label>
+            <input type="date" class="form-control" name="fim" id="fim" value="{{ fim or '' }}">
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" name="acao" value="relatorio" class="btn btn-primary me-2 w-100">Gerar Relatório</button>
+            <button type="submit" name="acao" value="excel" class="btn btn-success w-100">📁 Exportar</button>
+        </div>
+    </form>
+
+    {% if request.method == 'POST' %}
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card text-center h-100">
+                <div class="card-header">
+                    <strong>Serviços Realizados no Período</strong>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{ servicos_no_periodo or 0 }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card text-center h-100">
+                <div class="card-header">
+                    <strong>Média de Tempo de Atendimento (min)</strong>
+                </div>
+                <div class="card-body">
+                    {% if media_tempo_servico %}
+                        <h3 class="card-title">{{ media_tempo_servico | minutos_para_hora_minuto }}</h3>
+                    {% else %}
+                        <h3 class="card-title">0</h3>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+
+    <h3>Quantidade de Trâmites por Usuário</h3>
+    {% if tramites_por_usuario %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>Usuário</th>
+                    <th>Quantidade de Trâmites</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for nome, quantidade in tramites_por_usuario %}
+                <tr>
+                    <td>{{ nome }}</td>
+                    <td>{{ quantidade }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p>Nenhum trâmite registrado por usuários no período.</p>
+    {% endif %}
+    <hr>
+
+    <h3>Quantidade de Processos por Destino</h3>
+    {% if processos_por_destino %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>Destino</th>
+                    <th>Quantidade</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for destino, quantidade in processos_por_destino %}
+                <tr>
+                    <td>{{ destino }}</td>
+                    <td>{{ quantidade }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p>Nenhum processo encontrado no período.</p>
+    {% endif %}
+    <hr>
+    
+    <h3>Quantidade de Cada Serviço</h3>
+    {% if tramites_por_servico %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>Serviço</th>
+                    <th>Quantidade</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for nome_servico, quantidade in tramites_por_servico %}
+                <tr>
+                    <td>{{ nome_servico }}</td>
+                    <td>{{ quantidade }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p>Nenhum serviço realizado no período.</p>
+    {% endif %}
+    <hr>
+
+    <h3>Status dos Serviços</h3>
+    <ul class="list-group mb-4">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            Concluídos
+            <span class="badge bg-success rounded-pill">{{ status_concluido or 0 }}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            Pendentes
+            <span class="badge bg-warning text-dark rounded-pill">{{ status_pendente or 0 }}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            Em Andamento
+            <span class="badge bg-primary rounded-pill">{{ status_andamento or 0 }}</span>
+        </li>
+    </ul>
+    {% endif %}
+</div>
+{% endblock %}
